@@ -33,6 +33,11 @@ spec:
               valueFrom:
                   fieldRef:
                     fieldPath: spec.nodeName
+            - name: PROMETHEUS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: prometheus
+                  key: password
         - name: http-echo
           image: nginx
           imagePullPolicy: IfNotPresent

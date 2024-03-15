@@ -17,6 +17,12 @@ NAMESPACE = os.environ.get('NAMESPACE', 'network-check')
 CURRENT_POD_NAME = os.environ.get('POD_NAME', 'network-check')
 CURRENT_POD_NODE = os.environ.get('NODE_NAME', 'network-check')
 LOGGER = logging.getLogger("network-checker")
+NETWORK_LATENCY_METRIC = os.environ.get('NETWORK_LATENCY_METRIC', 'k8s_network_latency')
+NETWORK_AVAILABLE_METRIC = os.environ.get('NETWORK_AVAILABLE_METRIC', 'k8s_network_available')
+PROMETHEUS_PUSHGATEWAY = os.environ.get('PROMETHEUS_PUSHGATEWAY', 'https://pushgateway.adakite.ozeliurs.com')
+PROMETHEUS_USERNAME = os.environ.get('PROMETHEUS_USERNAME', 'exporter')
+PROMETHEUS_PASSWORD = os.environ.get('PROMETHEUS_PASSWORD', '')
+
 # set log level
 LOGGER.setLevel(logging.DEBUG)
 # create console handler and set level to debug
@@ -31,18 +37,16 @@ LOGGER.addHandler(ch)
 
 v1 = client.CoreV1Api()
 
-network_latency = Gauge('test_k8s_network_latency', 'Network latency',
+network_latency = Gauge(NETWORK_LATENCY_METRIC, 'Network latency',
                         [f"from", f"to"], registry=registry)
 
-network_available = Gauge('test_k8s_network_available', 'Network available',
+network_available = Gauge(NETWORK_AVAILABLE_METRIC, 'Network available',
                           [f"from", f"to"], registry=registry)
 
 
 # basic auth handler
-def my_auth_handler(url, method, timeout, headers, data):
-    username = 'exporter'
-    password = '%2D8NHq#unigcBxo'
-    return basic_auth_handler(url, method, timeout, headers, data, username, password)
+def auth_handler(url, method, timeout, headers, data):
+    return basic_auth_handler(url, method, timeout, headers, data, PROMETHEUS_USERNAME, PROMETHEUS_PASSWORD)
 
 
 async def update_hostnames():
@@ -92,10 +96,10 @@ async def test_connection(hostname):
 
 async def periodic():
     while True:
-        await asyncio.sleep(1)
+        await asyncio.sleep(4)
         await asyncio.gather(*[test_connection(hostname) for hostname in HOSTNAMES])
-        pushadd_to_gateway('https://pushgateway.adakite.ozeliurs.com', job='network-checker', registry=registry,
-                           handler=my_auth_handler, timeout=10,
+        pushadd_to_gateway(PROMETHEUS_PUSHGATEWAY, job='network-checker', registry=registry,
+                           handler=auth_handler, timeout=10,
                            grouping_key={'instance': CURRENT_POD_NODE})
 
 
