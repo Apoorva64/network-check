@@ -87,9 +87,7 @@ async def test_connection(hostname):
 
         network_latency.labels(f"{CURRENT_POD_NODE}", f"{hostname['node']}").set((end - start) * 1000)
         network_available.labels(f"{CURRENT_POD_NODE}", f"{hostname['node']}").set(1)
-
-
-    except requests.exceptions.RequestException as e:
+    except Exception as e:
         LOGGER.error(f"Connection to {hostname} failed: {e}")
         network_latency.labels(f"{CURRENT_POD_NODE}", f"{hostname['node']}").set(0)
 
