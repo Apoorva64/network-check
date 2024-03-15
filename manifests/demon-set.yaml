@@ -14,8 +14,8 @@ spec:
     spec:
       containers:
         - name: network-check
-          image: network-check22
-          imagePullPolicy: IfNotPresent
+          image: ghcr.io/apoorva64/network-check/network-check:latest
+          imagePullPolicy: Always
           env:
             - name: POD_NAME
               valueFrom:
