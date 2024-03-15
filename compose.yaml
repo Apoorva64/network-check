@@ -1,0 +1,5 @@
+services:
+  network-check:
+    image: network-check2
+    build:
+      context: .
