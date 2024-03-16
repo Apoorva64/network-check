@@ -61,6 +61,7 @@ Appadoo Apoorva Srinivas 🖊️
 
 - This project was inspired by the need for monitoring network connectivity within Kubernetes clusters. 🌟
 - Special thanks to the contributors and maintainers of the libraries and tools used in this project. 🙌
+- Ozeliurs has created a dashboard for the metrics produced by the app, which can be found at [this URL](https://grafana.com/grafana/dashboards/20707-internal-kubernetes-routes/).
 
 ### Support 📧
 
