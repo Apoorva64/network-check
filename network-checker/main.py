@@ -56,7 +56,9 @@ async def update_hostnames():
         hostnames = []
 
         for pod in pods:
-            if pod.metadata.name != CURRENT_POD_NAME:
+            if (pod.metadata.name != CURRENT_POD_NAME
+                    and pod.status.pod_ip is not None
+                    and pod.spec.node_name is not None):
                 hostnames.append(
 
                     {
@@ -89,7 +91,7 @@ async def test_connection(hostname):
         network_available.labels(f"{CURRENT_POD_NODE}", f"{hostname['node']}").set(1)
     except Exception as e:
         LOGGER.error(f"Connection to {hostname} failed: {e}")
-        network_latency.labels(f"{CURRENT_POD_NODE}", f"{hostname['node']}").set(0)
+        network_available.labels(f"{CURRENT_POD_NODE}", f"{hostname['node']}").set(0)
 
 
 async def periodic():
