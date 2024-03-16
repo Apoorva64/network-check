@@ -12,6 +12,11 @@ through a Pushgateway. 📊
 
 ```mermaid
 graph TD;
+    subgraph External Server
+        G[Grafana]
+        P[Prometheus]
+        PG[Prometheus Push Gateway]
+    end
     subgraph Kubernetes_Node_1
         NC1[Network Check Pod] 
         NGINX1[Nginx Pod]
@@ -21,8 +26,19 @@ graph TD;
         NC2[Network Check Pod] 
         NGINX3[Nginx Pod]
     end
-    NC1 --> NGINX3
-    NC2 --> NGINX1
+
+    NC1 ==> NGINX3
+    NC2 ==> NGINX1
+
+
+
+    P --> |scrape| PG
+    G -->|query| P 
+
+    NC1 --> PG
+
+    NC2 --> PG
+
 ```
 
 ### Features 🛠️
