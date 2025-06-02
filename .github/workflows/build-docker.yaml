@@ -1,4 +1,4 @@
-name: ci
+name: preview Docker image
 
 # on all branches but master
 on:
